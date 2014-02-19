@@ -1,7 +1,7 @@
-var Batch = require('batch')
-  , fs    = require('fs')
+var fs    = require('fs')
   , path  = require('path')
-  , sass  = require('node-sass-wrapper')
+  //, sass  = require('node-sass-wrapper')
+  , sass = require('node-sass')
   , debug = require('debug')('component-sass');
 
 
@@ -27,6 +27,66 @@ var options = {
  * Replace Sass files with CSS files.
  */
 
+module.exports = function (type, options) {
+  if (typeof type != 'string') throw new Error('you need to set a type');
+  if (!options) options = {};
+
+  return function (build, done) {
+    setImmediate(done);
+    build.map(type, function(file, conf){
+      if (!file.contents) {
+        file.filename = basename(file.filename) + '.css';
+        file.contents = "";
+        return file;
+      }
+      if (!sassFilter(file.filename)) return file;
+      debug('compiling: %s', conf.path());
+
+      var opts = {
+        compileDebug: false,
+        filename: conf.path()
+      };
+
+      return compileSass(file, opts);
+    });
+  };
+};
+
+function compileSass (file, opts) {
+  var orig_filename = opts.filename+'/'+file.filename;
+  console.log(orig_filename);
+
+  //file.filename = path.basename(file.filename, path.extname(file)) + '.css';
+  file.contents = sass.renderSync({
+    file: orig_filename
+  });
+  return file;
+}
+
+
+
+/*function compileSass (file, opts, done) {
+//options.loadPath = [__dirname, path.dirname(opts.filename+'/'+file.filename)];
+
+// Async
+  console.log(opts.filename + '/' + file.filename);
+    sass.compile((opts.filename+'/'+file.filename), options, function (err, css) {
+      if (err) {
+        debug('error compiling: %s, %s', file.filename, err);
+        throw new Error('Error compiling '+ file.filename + err);
+      }
+
+      file.filename = path.basename(file.filename, path.extname(file)) + '.css';
+      file.contents = css;
+      console.log(css);
+      //build.
+      done(err, file);
+    });
+
+  //return file;
+}*/
+
+/*
 module.exports = function (builder) {
 
   builder.hook('before styles', function (builder, callback) {
@@ -56,6 +116,7 @@ module.exports = function (builder) {
     batch.end(callback);
   });
 };
+*/
 
 
 /**
