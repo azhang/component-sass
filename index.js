@@ -1,6 +1,5 @@
 var fs    = require('fs')
   , path  = require('path')
-  //, sass  = require('node-sass-wrapper')
   , sass = require('node-sass')
   , debug = require('debug')('component-sass');
 
@@ -54,69 +53,12 @@ module.exports = function (type, options) {
 
 function compileSass (file, opts) {
   var orig_filename = opts.filename+'/'+file.filename;
-  console.log(orig_filename);
 
-  //file.filename = path.basename(file.filename, path.extname(file)) + '.css';
   file.contents = sass.renderSync({
     file: orig_filename
   });
   return file;
 }
-
-
-
-/*function compileSass (file, opts, done) {
-//options.loadPath = [__dirname, path.dirname(opts.filename+'/'+file.filename)];
-
-// Async
-  console.log(opts.filename + '/' + file.filename);
-    sass.compile((opts.filename+'/'+file.filename), options, function (err, css) {
-      if (err) {
-        debug('error compiling: %s, %s', file.filename, err);
-        throw new Error('Error compiling '+ file.filename + err);
-      }
-
-      file.filename = path.basename(file.filename, path.extname(file)) + '.css';
-      file.contents = css;
-      console.log(css);
-      //build.
-      done(err, file);
-    });
-
-  //return file;
-}*/
-
-/*
-module.exports = function (builder) {
-
-  builder.hook('before styles', function (builder, callback) {
-    if (!builder.config.styles) return callback();
-
-    var files = builder.config.styles.filter(sassFilter)
-      , batch = new Batch();
-
-    files.forEach(function (file) {
-      batch.push(function (done) {
-        debug('compiling: %s', file);
-
-        sass.compile(builder.path(file), options, function (err, css) {
-          if (err) {
-            debug('error compiling: %s, %s', file, err);
-            return done(err);
-          }
-
-          var newFile = path.basename(file, path.extname(file)) + '.css';
-          builder.addFile('styles', newFile, css);
-          builder.removeFile('styles', file);
-          done();
-        });
-      });
-    });
-
-    batch.end(callback);
-  });
-};
-*/
 
 
 /**
