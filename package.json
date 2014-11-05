@@ -17,7 +17,7 @@
     "debug": "~0.7.2",
     "async": "~0.2.6",
     "batch": "~0.2.1",
-    "node-sass": "~0.8.1"
+    "node-sass": "~1.1.4"
   },
   "devDependencies": {
     "component-builder": "git://github.com/calvinfo/builder.js.git#conf-race"
